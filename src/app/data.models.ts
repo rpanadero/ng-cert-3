@@ -31,3 +31,35 @@ export interface Stats {
 }
 
 export type Result = 'W' | 'L';
+
+export type Conference = 'East' | 'West';
+
+export type Division = 'Atlantic' | 'Central' | 'Southeast' | 'Northwest' | 'Pacific' | 'Southwest';
+
+export const EAST_DIVISIONS: ReadonlyArray<Division> = ['Atlantic', 'Central', 'Southeast'];
+
+export const WEST_DIVISIONS: ReadonlyArray<Division> = ['Northwest', 'Pacific', 'Southwest'];
+
+export const filterTeams = (teams: Team[], filters?: { conference?: string; division?: string }) => {
+  if (!filters) { return teams; }
+  return teams.filter(t => {
+    if (filters.conference && filters.conference !== t.conference) {
+      return false;
+    }
+    if (filters.division && filters.division !== t.division) {
+      return false;
+    }
+    return true;
+  });
+}
+
+export const getDivisionsByConference = (conference: Conference) => {
+  switch (conference) {
+    case 'East':
+      return EAST_DIVISIONS;
+    case 'West':
+      return WEST_DIVISIONS;
+    default:
+      return [];
+  }
+}
