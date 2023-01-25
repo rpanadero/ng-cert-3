@@ -7,11 +7,11 @@
     <h6>{{ team.conference }}ern conference</h6>
   </div>
   <hr />
-  <div class="container">
+  <div class="container no-margin no-padding">
     <div class="row">
       <div *ngIf="stats" class="col-sm-6">
         <p>Results of past {{ days }} days:</p>
-        <p>
+        <p class="last-games">
           <mark class="tag" *ngFor="let result of stats.lastGames" [class]="result">{{
             result
           }}</mark>

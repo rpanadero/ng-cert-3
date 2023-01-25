@@ -1,15 +1,7 @@
-.days-selector {
-  margin: var(--universal-margin);
-}
-
 form {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-}
-
-.control {
-  display: inline-block;
 }
 
 .input-label {
@@ -18,6 +10,34 @@ form {
   color: #444;
 }
 
-form .actions {
-  width: 100%;
+.actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.actions button {
+  margin-bottom: 4px;
+}
+
+.team-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.main-loading {
+  width: 50px;
+  height: 50px;
+}
+
+#game-stats-input-conference {
+  min-width: 150px;
+}
+
+#game-stats-input-division {
+  min-width: 150px;
+}
+
+#game-stats-input-team {
+  min-width: 250px;
 }

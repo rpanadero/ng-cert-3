@@ -1,7 +1,7 @@
-<div class="row">
-  <div class="col-sm-11">
-    <form [formGroup]="form" (submit)="onTrackTeam()">
-      <div class="control">
+<ng-container *ngIf="teams$ | async as teams; else loading">
+  <div class="margin-bottom-m">
+    <form class="no-margin" [formGroup]="form" (submit)="onTrackTeam()">
+      <div>
         <label class="input-label" for="game-stats-input-conference">Conference</label>
         <select id="game-stats-input-conference" formControlName="conference">
           <option value="">All</option>
@@ -9,7 +9,7 @@
           <option value="East">Eastern</option>
         </select>
       </div>
-      <div class="control">
+      <div>
         <label class="input-label" for="game-stats-input-division">Division</label>
         <select id="game-stats-input-division" formControlName="division">
           <option value="">All</option>
@@ -18,10 +18,10 @@
           </option>
         </select>
       </div>
-      <div class="control">
+      <div>
         <label class="input-label" for="game-stats-input-team">Team</label>
         <select id="game-stats-input-team" formControlName="team">
-          <option [value]="team.id" *ngFor="let team of teams$ | async">
+          <option [value]="team.id" *ngFor="let team of teams">
             {{ team.full_name }}
           </option>
         </select>
@@ -31,9 +31,7 @@
       </div>
     </form>
   </div>
-</div>
-<div class="row">
-  <div class="days-selector">
+  <div class="days-selector margin-bottom-m">
     Results of
     <select [(ngModel)]="teamResultsInDays">
       <option value="6">6</option>
@@ -42,16 +40,20 @@
     </select>
     days
   </div>
-</div>
-<div class="row">
-  <app-team-stats
-    class="col-sm-4"
-    *ngFor="let team of nbaService.getTrackedTeams()"
-    [team]="team"
-    [days]="teamResultsInDays"
-    (teamRemove)="onTeamRemove($event)">
-  </app-team-stats>
-</div>
+  <div class="team-stats">
+    <app-team-stats
+      class="team-stat"
+      *ngFor="let team of nbaService.getTrackedTeams()"
+      [team]="team"
+      [days]="teamResultsInDays"
+      (teamRemove)="onTeamRemove($event)">
+    </app-team-stats>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="main-loading spinner"></div>
+</ng-template>
 
 <app-dialog *ngIf="teamToRemove">
   <ng-template dialogContent>Are you sure you want to remove this team?</ng-template>
