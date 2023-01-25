@@ -17,9 +17,10 @@ export class NbaService {
 
   constructor(private http: HttpClient) {}
 
-  addTrackedTeam(team: Team): void {
-    if (this.isTeamTracked(team)) { return; }
+  addTrackedTeam(team: Team): boolean {
+    if (this.isTeamTracked(team)) { return false; }
     this.trackedTeams.push(team);
+    return true;
   }
 
   removeTrackedTeam(team: Team): void {

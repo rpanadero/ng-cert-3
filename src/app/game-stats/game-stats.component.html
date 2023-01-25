@@ -29,6 +29,9 @@
       <div class="actions">
         <button type="submit" class="primary">Track team</button>
       </div>
+      <div *ngIf="isTeamAlreadyTracked">
+        <span class="toast">Team already tracked</span>
+      </div>
     </form>
   </div>
   <div class="days-selector margin-bottom-m">

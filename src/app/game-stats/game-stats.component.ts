@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
-import { Conference, Division, filterTeams, getDivisionsByConference, Team } from '../models/data.models';
-import { combineLatest, concat, map, Observable, of, shareReplay, switchMap, tap } from 'rxjs';
+import {
+  Conference,
+  Division,
+  filterTeams,
+  getDivisionsByConference,
+  Team,
+} from '../models/data.models';
+import { combineLatest, concat, map, Observable, of, shareReplay, switchMap, tap, timer } from 'rxjs';
 import { NbaService } from '../services/nba.service';
 import { FormBuilder, FormControl } from '@angular/forms';
 
@@ -23,6 +29,7 @@ export class GameStatsComponent {
   form = this.buildForm();
 
   teamToRemove?: Team;
+  isTeamAlreadyTracked = false;
 
   private readonly allTeams$ = this.nbaService.getAllTeams().pipe(shareReplay(1));
 
@@ -32,13 +39,21 @@ export class GameStatsComponent {
   }
 
   onTrackTeam() {
+    this.isTeamAlreadyTracked = false;
     const teamId = this.form.value.team;
     if (!teamId) {
       return;
     }
+
     const team = this.currentTeams.find(team => team.id == Number(teamId));
-    if (team) {
-      this.nbaService.addTrackedTeam(team);
+    if (!team) {
+      return;
+    }
+
+    const tracked = this.nbaService.addTrackedTeam(team);
+    if (!tracked) {
+      this.isTeamAlreadyTracked = true;
+      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; })
     }
   }
 
@@ -51,7 +66,9 @@ export class GameStatsComponent {
   }
 
   confirmTeamRemove() {
-    if (!this.teamToRemove) { return; }
+    if (!this.teamToRemove) {
+      return;
+    }
     this.nbaService.removeTrackedTeam(this.teamToRemove);
     this.teamToRemove = undefined;
   }
