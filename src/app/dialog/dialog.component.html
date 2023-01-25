@@ -1,0 +1,12 @@
+<div class="dialog">
+  <div class="container">
+    <div *ngIf="contentTmpl" class="content">
+      <ng-container *ngTemplateOutlet="contentTmpl"></ng-container>
+    </div>
+    <div *ngIf="footerTmpl" class="footer">
+      <ng-container *ngTemplateOutlet="footerTmpl"></ng-container>
+    </div>
+    <ng-content></ng-content>
+  </div>
+</div>
+<div class="overlay"></div>

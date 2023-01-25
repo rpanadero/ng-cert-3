@@ -18,10 +18,11 @@ interface TeamTrackForm {
 export class GameStatsComponent {
   divisions$: Observable<ReadonlyArray<Division>>;
   teams$: Observable<Team[]>;
-  allTeams: Team[] = [];
+  currentTeams: Team[] = [];
   teamResultsInDays = '12';
-
   form = this.buildForm();
+
+  teamToRemove?: Team;
 
   private readonly allTeams$ = this.nbaService.getAllTeams().pipe(shareReplay(1));
 
@@ -35,10 +36,24 @@ export class GameStatsComponent {
     if (!teamId) {
       return;
     }
-    const team = this.allTeams.find(team => team.id == Number(teamId));
+    const team = this.currentTeams.find(team => team.id == Number(teamId));
     if (team) {
       this.nbaService.addTrackedTeam(team);
     }
+  }
+
+  onTeamRemove(team: Team) {
+    this.teamToRemove = team;
+  }
+
+  cancelTeamRemove() {
+    this.teamToRemove = undefined;
+  }
+
+  confirmTeamRemove() {
+    if (!this.teamToRemove) { return; }
+    this.nbaService.removeTrackedTeam(this.teamToRemove);
+    this.teamToRemove = undefined;
   }
 
   private buildForm() {
@@ -73,8 +88,8 @@ export class GameStatsComponent {
         })
       ),
       tap(teams => {
-        this.allTeams = teams;
-        this.form.patchValue({ team: String(this.allTeams?.[0]?.id) });
+        this.currentTeams = teams;
+        this.form.patchValue({ team: String(this.currentTeams?.[0]?.id) });
       })
     );
   }

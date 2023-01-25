@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap } from 'rxjs';
 import { NbaService } from '../nba.service';
 import { Game, Stats, Team } from '../data.models';
@@ -17,6 +17,8 @@ export class TeamStatsComponent implements OnInit {
   set days(days: number | string) {
     this.daysSubject.next(Number(days));
   }
+  @Output()
+  teamRemove = new EventEmitter<Team>();
 
   games$?: Observable<Game[]>;
   stats?: Stats;
@@ -39,5 +41,9 @@ export class TeamStatsComponent implements OnInit {
 
   get days() {
     return this.daysSubject.value;
+  }
+
+  onRemoveTrackedTeam(team: Team) {
+    this.teamRemove.next(team);
   }
 }

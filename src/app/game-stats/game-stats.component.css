@@ -1,3 +1,23 @@
 .days-selector {
   margin: var(--universal-margin);
 }
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.control {
+  display: inline-block;
+}
+
+.input-label {
+  display: block;
+  font-weight: 600;
+  color: #444;
+}
+
+form .actions {
+  width: 100%;
+}

@@ -1,28 +1,40 @@
 <div class="row">
   <div class="col-sm-11">
     <form [formGroup]="form" (submit)="onTrackTeam()">
-      <select formControlName="conference">
-        <option value="">Not selected</option>
-        <option value="West">Western</option>
-        <option value="East">Eastern</option>
-      </select>
-      <select formControlName="division">
-        <option value="">Not selected</option>
-        <option [value]="division" *ngFor="let division of divisions$ | async">
-          {{ division }}
-        </option>
-      </select>
-      <select formControlName="team">
-        <option [value]="team.id" *ngFor="let team of teams$ | async">
-          {{ team.full_name }}
-        </option>
-      </select>
-      <button type="submit" class="primary">Track team</button>
+      <div class="control">
+        <label class="input-label" for="game-stats-input-conference">Conference</label>
+        <select id="game-stats-input-conference" formControlName="conference">
+          <option value="">All</option>
+          <option value="West">Western</option>
+          <option value="East">Eastern</option>
+        </select>
+      </div>
+      <div class="control">
+        <label class="input-label" for="game-stats-input-division">Division</label>
+        <select id="game-stats-input-division" formControlName="division">
+          <option value="">All</option>
+          <option [value]="division" *ngFor="let division of divisions$ | async">
+            {{ division }}
+          </option>
+        </select>
+      </div>
+      <div class="control">
+        <label class="input-label" for="game-stats-input-team">Team</label>
+        <select id="game-stats-input-team" formControlName="team">
+          <option [value]="team.id" *ngFor="let team of teams$ | async">
+            {{ team.full_name }}
+          </option>
+        </select>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary">Track team</button>
+      </div>
     </form>
   </div>
 </div>
 <div class="row">
   <div class="days-selector">
+    Results of
     <select [(ngModel)]="teamResultsInDays">
       <option value="6">6</option>
       <option value="12">12</option>
@@ -36,6 +48,15 @@
     class="col-sm-4"
     *ngFor="let team of nbaService.getTrackedTeams()"
     [team]="team"
-    [days]="teamResultsInDays">
+    [days]="teamResultsInDays"
+    (teamRemove)="onTeamRemove($event)">
   </app-team-stats>
 </div>
+
+<app-dialog *ngIf="teamToRemove">
+  <ng-template dialogContent>Are you sure you want to remove this team?</ng-template>
+  <ng-template dialogFooter>
+    <button (click)="cancelTeamRemove()">No</button>
+    <button class="primary" (click)="confirmTeamRemove()">Yes</button>
+  </ng-template>
+</app-dialog>
