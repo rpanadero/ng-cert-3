@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Conference, Division, filterTeams, getDivisionsByConference, Team } from '../data.models';
+import { Conference, Division, filterTeams, getDivisionsByConference, Team } from '../models/data.models';
 import { combineLatest, concat, map, Observable, of, shareReplay, switchMap, tap } from 'rxjs';
-import { NbaService } from '../nba.service';
+import { NbaService } from '../services/nba.service';
 import { FormBuilder, FormControl } from '@angular/forms';
 
 interface TeamTrackForm {

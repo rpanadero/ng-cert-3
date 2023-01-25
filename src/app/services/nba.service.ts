@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { format, subDays } from 'date-fns';
-import { Game, Stats, Team } from './data.models';
+import { Game, Stats, Team } from '../models/data.models';
 
 @Injectable({
   providedIn: 'root',

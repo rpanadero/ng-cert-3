@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NbaService } from '../nba.service';
-import { Game, Team } from '../data.models';
+import { NbaService } from '../services/nba.service';
+import { Game, Team } from '../models/data.models';
 import { Observable } from 'rxjs';
 
 @Component({
