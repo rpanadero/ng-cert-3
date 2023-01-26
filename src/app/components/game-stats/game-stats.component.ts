@@ -1,12 +1,5 @@
 import { Component } from '@angular/core';
 import {
-  Conference,
-  Division,
-  filterTeams,
-  getDivisionsByConference,
-  Team,
-} from '../models/data.models';
-import {
   combineLatest,
   combineLatestWith,
   concat,
@@ -17,8 +10,9 @@ import {
   tap,
   timer,
 } from 'rxjs';
-import { NbaService } from '../services/nba.service';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NbaService } from 'src/app/services/nba.service';
+import { Conference, Division, Team, getDivisionsByConference, filterTeams } from 'src/app/models/data.models';
 
 interface TeamTrackForm {
   conference: FormControl<Conference | ''>;

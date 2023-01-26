@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap } from 'rxjs';
-import { NbaService } from '../services/nba.service';
-import { Game, Stats, Team } from '../models/data.models';
+import { NbaService } from '../../services/nba.service';
+import { Game, Stats, Team } from '../../models/data.models';
 
 @Component({
   selector: 'app-team-stats',

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NbaService } from '../services/nba.service';
-import { Game, Team } from '../models/data.models';
 import { combineLatestWith, filter, map, Observable, switchMap } from 'rxjs';
+import { Team, Game } from 'src/app/models/data.models';
+import { NbaService } from 'src/app/services/nba.service';
 
 @Component({
   selector: 'app-game-results',
