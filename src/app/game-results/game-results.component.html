@@ -1,4 +1,4 @@
-<div class="card" *ngIf="team">
+<div class="card" *ngIf="team$ | async as team">
   <h3>{{ team.full_name }} [{{ team.abbreviation }}]</h3>
   <h6>{{ team.conference }}ern conference</h6>
   <hr />

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, shareReplay } from 'rxjs';
 import { format, subDays } from 'date-fns';
 import { Game, Stats, Team } from '../models/data.models';
 
@@ -13,31 +13,26 @@ export class NbaService {
     'X-RapidAPI-Host': 'free-nba.p.rapidapi.com',
   };
   private static readonly API_URL = 'https://free-nba.p.rapidapi.com';
-  trackedTeams: Team[] = [];
+
+  readonly allTeams$ = this.getAllTeams().pipe(shareReplay(1)); // Cache results
+
+  readonly state = {
+    trackedTeams$: new BehaviorSubject<Team[]>([]),
+  } as const;
 
   constructor(private http: HttpClient) {}
 
   addTrackedTeam(team: Team): boolean {
-    if (this.isTeamTracked(team)) { return false; }
-    this.trackedTeams.push(team);
+    if (this.isTeamTracked(team)) {
+      return false;
+    }
+    this.state.trackedTeams$.next([...this.state.trackedTeams$.value, team]);
     return true;
   }
 
   removeTrackedTeam(team: Team): void {
-    let index = this.trackedTeams.findIndex(t => t.id == team.id);
-    this.trackedTeams.splice(index, 1);
-  }
-
-  getTrackedTeams(): Team[] {
-    return this.trackedTeams;
-  }
-
-  getAllTeams(): Observable<Team[]> {
-    return this.http
-      .get<{ data: Team[] }>(`${NbaService.API_URL}/teams?page=0`, {
-        headers: NbaService.HEADERS,
-      })
-      .pipe(map(res => res.data));
+    const newTrackedTeams = this.state.trackedTeams$.value.filter(t => t.id !== team.id);
+    this.state.trackedTeams$.next(newTrackedTeams);
   }
 
   getLastResults(team: Team, numberOfDays = 12): Observable<Game[]> {
@@ -68,6 +63,18 @@ export class NbaService {
     stats.averagePointsScored = Math.round(stats.averagePointsScored / games.length);
     stats.averagePointsConceded = Math.round(stats.averagePointsConceded / games.length);
     return stats;
+  }
+
+  private getAllTeams(): Observable<Team[]> {
+    return this.http
+      .get<{ data: Team[] }>(`${NbaService.API_URL}/teams?page=0`, {
+        headers: NbaService.HEADERS,
+      })
+      .pipe(map(res => res.data));
+  }
+
+  private isTeamTracked(team: Team) {
+    return this.state.trackedTeams$.value.some(t => t.id === team.id);
   }
 
   private getDaysQueryString(nbOfDays = 12): string {
@@ -106,9 +113,5 @@ export class NbaService {
       }
     }
     return stats;
-  }
-
-  private isTeamTracked(team: Team) {
-    return this.trackedTeams.some(t => t.id === team.id);
   }
 }

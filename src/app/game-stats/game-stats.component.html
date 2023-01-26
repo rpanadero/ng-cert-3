@@ -1,6 +1,7 @@
-<ng-container *ngIf="teams$ | async as teams; else loading">
+<ng-container *ngIf="formTeamsSelect$ | async as formTeamsSelect; else loading">
+  <!-- Team track form -->
   <div class="margin-bottom-m">
-    <form class="no-margin" [formGroup]="form" (submit)="onTrackTeam()">
+    <form class="no-margin" [formGroup]="form" (submit)="onTrackTeam(formTeamsSelect.selectedTeam)">
       <div>
         <label class="input-label" for="game-stats-input-conference">Conference</label>
         <select id="game-stats-input-conference" formControlName="conference">
@@ -13,7 +14,7 @@
         <label class="input-label" for="game-stats-input-division">Division</label>
         <select id="game-stats-input-division" formControlName="division">
           <option value="">All</option>
-          <option [value]="division" *ngFor="let division of divisions$ | async">
+          <option [value]="division" *ngFor="let division of formDivisions$ | async">
             {{ division }}
           </option>
         </select>
@@ -21,7 +22,7 @@
       <div>
         <label class="input-label" for="game-stats-input-team">Team</label>
         <select id="game-stats-input-team" formControlName="team">
-          <option [value]="team.id" *ngFor="let team of teams">
+          <option [value]="team.id" *ngFor="let team of formTeamsSelect.teams">
             {{ team.full_name }}
           </option>
         </select>
@@ -34,6 +35,7 @@
       </div>
     </form>
   </div>
+  <!-- Results selector -->
   <div class="days-selector margin-bottom-m">
     Results of
     <select [(ngModel)]="teamResultsInDays">
@@ -43,10 +45,11 @@
     </select>
     days
   </div>
+  <!-- Tracked teams -->
   <div class="team-stats">
     <app-team-stats
       class="team-stat"
-      *ngFor="let team of nbaService.getTrackedTeams()"
+      *ngFor="let team of trackedTeams$ | async"
       [team]="team"
       [days]="teamResultsInDays"
       (teamRemove)="onTeamRemove($event)">

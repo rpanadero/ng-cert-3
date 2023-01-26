@@ -6,9 +6,19 @@ import {
   getDivisionsByConference,
   Team,
 } from '../models/data.models';
-import { combineLatest, concat, map, Observable, of, shareReplay, switchMap, tap, timer } from 'rxjs';
+import {
+  combineLatest,
+  combineLatestWith,
+  concat,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  timer,
+} from 'rxjs';
 import { NbaService } from '../services/nba.service';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 interface TeamTrackForm {
   conference: FormControl<Conference | ''>;
@@ -22,38 +32,34 @@ interface TeamTrackForm {
   styleUrls: ['./game-stats.component.css'],
 })
 export class GameStatsComponent {
-  divisions$: Observable<ReadonlyArray<Division>>;
-  teams$: Observable<Team[]>;
-  currentTeams: Team[] = [];
-  teamResultsInDays = '12';
-  form = this.buildForm();
-
+  // Team track form data
+  form: FormGroup<TeamTrackForm>;
+  formDivisions$: Observable<ReadonlyArray<Division>>;
+  formTeamsSelect$: Observable<{ teams: Team[]; selectedTeam: Team | undefined }>;
+  //
+  trackedTeams$: Observable<Team[]>;
+  teamResultsInDays: string;
+  // UI messages
   teamToRemove?: Team;
-  isTeamAlreadyTracked = false;
+  isTeamAlreadyTracked: boolean;
 
-  private readonly allTeams$ = this.nbaService.getAllTeams().pipe(shareReplay(1));
-
-  constructor(protected nbaService: NbaService, private fb: FormBuilder) {
-    this.teams$ = this.getTeams();
-    this.divisions$ = this.getDivisions();
+  constructor(private nbaService: NbaService, private fb: FormBuilder) {
+    this.form = this.buildForm();
+    this.formDivisions$ = this.getFormDivisions();
+    this.formTeamsSelect$ = this.getFormTeamsSelectData();
+    this.trackedTeams$ = this.nbaService.state.trackedTeams$;
+    this.teamResultsInDays = '12';
+    this.teamToRemove = undefined;
+    this.isTeamAlreadyTracked = false;
   }
 
-  onTrackTeam() {
+  onTrackTeam(team: Team | undefined) {
+    if (!team) { return; }
     this.isTeamAlreadyTracked = false;
-    const teamId = this.form.value.team;
-    if (!teamId) {
-      return;
-    }
-
-    const team = this.currentTeams.find(team => team.id == Number(teamId));
-    if (!team) {
-      return;
-    }
-
     const tracked = this.nbaService.addTrackedTeam(team);
     if (!tracked) {
       this.isTeamAlreadyTracked = true;
-      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; })
+      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; });
     }
   }
 
@@ -81,8 +87,8 @@ export class GameStatsComponent {
     });
   }
 
-  private getDivisions() {
-    return this.getConferenceValue().pipe(
+  private getFormDivisions() {
+    return this.getFormConferenceValue().pipe(
       map(conference => (conference ? getDivisionsByConference(conference) : [])),
       tap(divisions => {
         if (divisions.length) {
@@ -93,36 +99,42 @@ export class GameStatsComponent {
     );
   }
 
-  private getTeams() {
-    return combineLatest({
-      conference: this.getConferenceValue(),
-      division: this.getDivisionValue(),
+  private getFormTeamsSelectData() {
+    const teams$ = combineLatest({
+      conference: this.getFormConferenceValue(),
+      division: this.getFormDivisionValue(),
     }).pipe(
-      switchMap(({ conference, division }) =>
-        this.getFilteredTeams({
-          conference: conference || undefined,
-          division: division || undefined,
-        })
-      ),
+      switchMap(({ conference, division }) => this.getFilteredTeams({ conference, division })),
       tap(teams => {
-        this.currentTeams = teams;
-        this.form.patchValue({ team: String(this.currentTeams?.[0]?.id) });
+        this.form.patchValue({ team: String(teams[0]?.id) });
       })
     );
+    const selectedTeam$ = this.getFormTeamIdValue().pipe(
+      combineLatestWith(teams$),
+      map(([teamId, teams]) => teams.find(t => t.id === Number(teamId)))
+    );
+    return combineLatest({
+      teams: teams$,
+      selectedTeam: selectedTeam$,
+    });
   }
 
   private getFilteredTeams(filters?: { conference?: string; division?: string }) {
-    return this.allTeams$.pipe(map(teams => filterTeams(teams, filters)));
+    return this.nbaService.allTeams$.pipe(map(teams => filterTeams(teams, filters)));
   }
 
-  private getConferenceValue() {
+  private getFormConferenceValue() {
     return concat(
       of(this.form.controls.conference.value),
       this.form.controls.conference.valueChanges
     );
   }
 
-  private getDivisionValue() {
+  private getFormDivisionValue() {
     return concat(of(this.form.controls.division.value), this.form.controls.division.valueChanges);
+  }
+
+  private getFormTeamIdValue() {
+    return concat(of(this.form.controls.team.value), this.form.controls.team.valueChanges);
   }
 }
