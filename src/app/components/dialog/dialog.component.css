@@ -16,6 +16,7 @@
   background-color: white;
   padding: 20px;
   overflow-y: scroll;
+  border-radius: 2px;
 }
 
 .content {

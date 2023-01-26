@@ -53,7 +53,7 @@ export class GameStatsComponent {
     const tracked = this.nbaService.addTrackedTeam(team);
     if (!tracked) {
       this.isTeamAlreadyTracked = true;
-      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; });
+      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; }); // show toast for 3s
     }
   }
 
