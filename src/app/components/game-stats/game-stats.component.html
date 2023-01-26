@@ -30,9 +30,7 @@
       <div class="actions">
         <button type="submit" class="primary">Track team</button>
       </div>
-      <div *ngIf="isTeamAlreadyTracked">
-        <span class="toast">Team already tracked</span>
-      </div>
+      <span *ngIf="isTeamAlreadyTracked" class="toast">Team already tracked</span>
     </form>
   </div>
   <!-- Results selector -->
