@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   combineLatest,
   combineLatestWith,
@@ -8,7 +8,6 @@ import {
   of,
   switchMap,
   tap,
-  timer,
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NbaService } from 'src/app/services/nba.service';
@@ -68,7 +67,7 @@ export class GameStatsComponent {
 
   onTeamRemove(team: Team) {
     const dialog = this.dialogService.open(RemoveTrackedTeamDialogComponent, { data: team });
-    dialog?.afterClosed$.subscribe(res => {
+    dialog.afterClosed$.subscribe(res => {
       if (res?.confirm) {
         this.nbaService.removeTrackedTeam(team);
       }

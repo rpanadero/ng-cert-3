@@ -12,8 +12,6 @@ export class DialogService {
   private viewRef?: ViewContainerRef;
   private dialogCmpRef?: ComponentRef<DialogComponent>;
 
-  constructor() {}
-
   open<T>(dialogCmp: Type<T>, config?: DialogConfig) {
     if (!this.viewRef) {
       throw new Error('No dialogOutlet set');
@@ -38,8 +36,7 @@ export class DialogService {
     });
 
     if (!this.dialogCmpRef) {
-      console.error('Error opening dialog');
-      return;
+      throw new Error('No component created');
     }
 
     dialogRef.afterClosed$.pipe(take(1)).subscribe(() => {
