@@ -1,12 +1,6 @@
-<div class="dialog">
-  <div class="container">
-    <div *ngIf="contentTmpl" class="content">
-      <ng-container *ngTemplateOutlet="contentTmpl"></ng-container>
-    </div>
-    <div *ngIf="footerTmpl" class="footer">
-      <ng-container *ngTemplateOutlet="footerTmpl"></ng-container>
-    </div>
-    <ng-content></ng-content>
+<div class="dialog" (click)="onClickDialog($event)">
+  <div class="dialog-container">
+    <ng-container #dialogInsertionPoint></ng-container>
   </div>
 </div>
-<div class="overlay"></div>
+<div class="overlay" (click)="onClickOverlay($event)"></div>

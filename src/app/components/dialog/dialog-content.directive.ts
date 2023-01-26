@@ -1,7 +1,9 @@
-import { Directive } from '@angular/core';
+import { Directive, HostBinding } from '@angular/core';
 
 @Directive({
   selector: '[dialogContent]',
-  standalone: true
+  standalone: true,
 })
-export class DialogContentDirective {}
+export class DialogContentDirective {
+  @HostBinding('class') classes = 'dialog-content';
+}

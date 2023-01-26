@@ -1,7 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, ContentChild, OnInit, TemplateRef } from '@angular/core';
-import { DialogContentDirective } from './dialog-content.directive';
-import { DialogFooterDirective } from './dialog-footer.directive';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ComponentRef,
+  OnDestroy,
+  Type,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation,
+} from '@angular/core';
 
 @Component({
   selector: 'app-dialog',
@@ -9,22 +17,40 @@ import { DialogFooterDirective } from './dialog-footer.directive';
   styleUrls: ['./dialog.component.css'],
   standalone: true,
   imports: [CommonModule],
+  encapsulation: ViewEncapsulation.None,
 })
-export class DialogComponent implements OnInit {
-  @ContentChild(DialogContentDirective, { read: TemplateRef })
-  contentTmpl?: TemplateRef<DialogContentDirective>;
-  @ContentChild(DialogFooterDirective, { read: TemplateRef })
-  footerTmpl?: TemplateRef<DialogFooterDirective>;
+export class DialogComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('dialogInsertionPoint', { read: ViewContainerRef })
+  dialogInsertionPoint?: ViewContainerRef;
 
-  constructor() {}
+  childComponentType?: Type<any>;
 
-  ngOnInit(): void {
-    console.log('TEST');
+  private childComponentRef?: ComponentRef<unknown>;
+
+  constructor(public viewContainerRef: ViewContainerRef, private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit() {
+    this.loadChildComponent();
+    this.cdr.detectChanges();
   }
 
-  ngAfterContentInit() {
-    setInterval(() => {
-      console.log('INIT 2', this.contentTmpl, this.footerTmpl);
-    }, 5000);
+  ngOnDestroy() {
+    this.childComponentRef?.destroy();
+  }
+
+  onClickOverlay(evt: MouseEvent) {
+    evt.stopPropagation();
+  }
+
+  onClickDialog(evt: MouseEvent) {
+    evt.stopPropagation();
+  }
+
+  private loadChildComponent() {
+    if (!this.childComponentType || !this.dialogInsertionPoint) {
+      return;
+    }
+    this.dialogInsertionPoint.clear();
+    this.childComponentRef = this.dialogInsertionPoint.createComponent(this.childComponentType);
   }
 }

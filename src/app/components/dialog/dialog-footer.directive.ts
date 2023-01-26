@@ -1,7 +1,9 @@
-import { Directive } from '@angular/core';
+import { Directive, HostBinding } from '@angular/core';
 
 @Directive({
   selector: '[dialogFooter]',
   standalone: true
 })
-export class DialogFooterDirective {}
+export class DialogFooterDirective {
+  @HostBinding('class') classes = 'dialog-footer';
+}

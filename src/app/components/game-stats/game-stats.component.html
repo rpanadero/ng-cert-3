@@ -30,7 +30,6 @@
       <div class="actions">
         <button type="submit" class="primary">Track team</button>
       </div>
-      <span *ngIf="isTeamAlreadyTracked" class="toast">Team already tracked</span>
     </form>
   </div>
   <!-- Results selector -->
@@ -60,11 +59,3 @@
     <div class="spinner"></div>
   </div>
 </ng-template>
-
-<app-dialog *ngIf="teamToRemove">
-  <ng-template dialogContent>Are you sure you want to remove this team?</ng-template>
-  <ng-template dialogFooter>
-    <button (click)="cancelTeamRemove()">No</button>
-    <button class="primary" (click)="confirmTeamRemove()">Yes</button>
-  </ng-template>
-</app-dialog>

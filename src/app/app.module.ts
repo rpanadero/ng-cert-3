@@ -11,6 +11,8 @@ import { DialogFooterDirective } from './components/dialog/dialog-footer.directi
 import { DialogComponent } from './components/dialog/dialog.component';
 import { GameResultsComponent } from './components/game-results/game-results.component';
 import { GameStatsComponent } from './components/game-stats/game-stats.component';
+import { DialogOutletDirective } from './components/dialog/dialog-outlet.directive';
+import { RemoveTrackedTeamDialogComponent } from './dialogs/remove-tracked-team-dialog/remove-tracked-team-dialog.component';
 
 @NgModule({
   declarations: [AppComponent, TeamStatsComponent, GameResultsComponent, GameStatsComponent],
@@ -23,6 +25,7 @@ import { GameStatsComponent } from './components/game-stats/game-stats.component
     DialogComponent,
     DialogContentDirective,
     DialogFooterDirective,
+    DialogOutletDirective
   ],
   providers: [],
   bootstrap: [AppComponent],

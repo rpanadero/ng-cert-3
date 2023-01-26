@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import {
   combineLatest,
   combineLatestWith,
@@ -12,7 +12,16 @@ import {
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NbaService } from 'src/app/services/nba.service';
-import { Conference, Division, Team, getDivisionsByConference, filterTeams } from 'src/app/models/data.models';
+import {
+  Conference,
+  Division,
+  Team,
+  getDivisionsByConference,
+  filterTeams,
+} from 'src/app/models/data.models';
+import { DialogService } from '../dialog/dialog.service';
+import { RemoveTrackedTeamDialogComponent } from 'src/app/dialogs/remove-tracked-team-dialog/remove-tracked-team-dialog.component';
+import { UiHelperService } from 'src/app/services/ui-helper.service';
 
 interface TeamTrackForm {
   conference: FormControl<Conference | ''>;
@@ -33,44 +42,37 @@ export class GameStatsComponent {
   //
   trackedTeams$: Observable<Team[]>;
   teamResultsInDays: string;
-  // UI messages
-  teamToRemove?: Team;
-  isTeamAlreadyTracked: boolean;
 
-  constructor(private nbaService: NbaService, private fb: FormBuilder) {
+  constructor(
+    private nbaService: NbaService,
+    private fb: FormBuilder,
+    private dialogService: DialogService,
+    private uiHelperService: UiHelperService,
+  ) {
     this.form = this.buildForm();
     this.formDivisions$ = this.getFormDivisions();
     this.formTeamsSelect$ = this.getFormTeamsSelectData();
     this.trackedTeams$ = this.nbaService.state.trackedTeams$;
     this.teamResultsInDays = '12';
-    this.teamToRemove = undefined;
-    this.isTeamAlreadyTracked = false;
   }
 
   onTrackTeam(team: Team | undefined) {
-    if (!team) { return; }
-    this.isTeamAlreadyTracked = false;
+    if (!team) {
+      return;
+    }
     const tracked = this.nbaService.addTrackedTeam(team);
     if (!tracked) {
-      this.isTeamAlreadyTracked = true;
-      timer(3000).subscribe(() => { this.isTeamAlreadyTracked = false; }); // show toast for 3s
+      this.uiHelperService.showToast('Team already tracked');
     }
   }
 
   onTeamRemove(team: Team) {
-    this.teamToRemove = team;
-  }
-
-  cancelTeamRemove() {
-    this.teamToRemove = undefined;
-  }
-
-  confirmTeamRemove() {
-    if (!this.teamToRemove) {
-      return;
-    }
-    this.nbaService.removeTrackedTeam(this.teamToRemove);
-    this.teamToRemove = undefined;
+    const dialog = this.dialogService.open(RemoveTrackedTeamDialogComponent, { data: team });
+    dialog?.afterClosed$.subscribe(res => {
+      if (res?.confirm) {
+        this.nbaService.removeTrackedTeam(team);
+      }
+    });
   }
 
   private buildForm() {
