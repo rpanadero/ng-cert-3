@@ -8,7 +8,6 @@ import {
   Type,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation,
 } from '@angular/core';
 
 @Component({
@@ -17,7 +16,6 @@ import {
   styleUrls: ['./dialog.component.css'],
   standalone: true,
   imports: [CommonModule],
-  encapsulation: ViewEncapsulation.None,
 })
 export class DialogComponent implements AfterViewInit, OnDestroy {
   @ViewChild('dialogInsertionPoint', { read: ViewContainerRef })
