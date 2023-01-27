@@ -1,0 +1,14 @@
+.app-title {
+  margin: 0;
+  padding: 30px;
+  background: #444;
+  color: white;
+}
+
+.page-content {
+  padding: 40px 30px;
+  max-width: calc(1200px + 60px);
+  margin: 0 auto;
+  box-sizing: content-box;
+}
+

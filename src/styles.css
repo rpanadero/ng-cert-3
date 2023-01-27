@@ -1,2 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/mini.css/dist/mini-default.min.css";
+
+.no-margin {
+  margin: 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.margin-bottom-m {
+  margin-bottom: 20px;
+}

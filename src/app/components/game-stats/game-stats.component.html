@@ -1,0 +1,61 @@
+<ng-container *ngIf="formTeamsSelect$ | async as formTeamsSelect; else loading">
+  <!-- Team track form -->
+  <div class="margin-bottom-m">
+    <form class="no-margin" [formGroup]="form" (submit)="onTrackTeam(formTeamsSelect.selectedTeam)">
+      <div>
+        <label class="input-label" for="game-stats-input-conference">Conference</label>
+        <select id="game-stats-input-conference" formControlName="conference">
+          <option value="">All</option>
+          <option value="West">Western</option>
+          <option value="East">Eastern</option>
+        </select>
+      </div>
+      <div>
+        <label class="input-label" for="game-stats-input-division">Division</label>
+        <select id="game-stats-input-division" formControlName="division">
+          <option value="">All</option>
+          <option [value]="division" *ngFor="let division of formDivisions$ | async">
+            {{ division }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label class="input-label" for="game-stats-input-team">Team</label>
+        <select id="game-stats-input-team" formControlName="team">
+          <option [value]="team.id" *ngFor="let team of formTeamsSelect.teams">
+            {{ team.full_name }}
+          </option>
+        </select>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary">Track team</button>
+      </div>
+    </form>
+  </div>
+  <!-- Results selector -->
+  <div class="days-selector margin-bottom-m">
+    Results of
+    <select [(ngModel)]="teamResultsInDays">
+      <option value="6">6</option>
+      <option value="12">12</option>
+      <option value="20">20</option>
+    </select>
+    days
+  </div>
+  <!-- Tracked teams -->
+  <div class="team-stats">
+    <app-team-stats
+      class="team-stat"
+      *ngFor="let team of trackedTeams$ | async"
+      [team]="team"
+      [days]="teamResultsInDays"
+      (teamRemove)="onTeamRemove($event)">
+    </app-team-stats>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="main-loading">
+    <div class="spinner"></div>
+  </div>
+</ng-template>
